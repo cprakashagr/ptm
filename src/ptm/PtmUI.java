@@ -23,7 +23,7 @@ import javax.swing.plaf.FontUIResource;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
-public class PtmUI extends JFrame {
+public class PtmUI extends JFrame implements Runnable {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
@@ -87,21 +87,15 @@ public class PtmUI extends JFrame {
 					System.out.println("If");
 				}
 				else {
-					System.out.println("Else");
-					String so = sourceFilePath.getText();
-					String st;
-					st = new File("db/stop.txt").getAbsolutePath();
-					if (!stopFilePath.getText().isEmpty())
-						st = stopFilePath.getText();
-					String pa = patternText.getText();
 					
-//					System.out.println(so + " " + st + " " + pa);
-					PtmAlgo obj = new PtmAlgo(so,st,pa);
+					Thread t1 = new Thread(PtmUI.this);
+					t1.start();
 					
-					timePtm = obj.getTimePtm();
-					timeOrig = obj.getTimeOrig();
-					
-					System.out.println(timeOrig+ " ... " + timePtm);
+					try {
+						t1.join();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 					timeOrigTextPane.setText(leftTextPane + " " + timeOrig + " ns " + rightTextPane);
 					timePTMTextPane.setText(leftTextPane + " " + timePtm + " ns " + rightTextPane2);
 					
@@ -204,5 +198,25 @@ public class PtmUI extends JFrame {
 					.addContainerGap())
 		);
 		contentPane.setLayout(gl_contentPane);
+	}
+
+	@Override
+	public void run() {
+		System.out.println("Else");
+		String so = sourceFilePath.getText();
+		String st;
+		st = new File("db/stop.txt").getAbsolutePath();
+		if (!stopFilePath.getText().isEmpty())
+			st = stopFilePath.getText();
+		String pa = patternText.getText();
+		
+//		System.out.println(so + " " + st + " " + pa);
+		PtmAlgo obj = new PtmAlgo(so,st,pa);
+		
+		timePtm = obj.getTimePtm();
+		timeOrig = obj.getTimeOrig();
+		
+		System.out.println(timeOrig+ " ... " + timePtm);
+		notify();
 	}
 }

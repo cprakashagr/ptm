@@ -20,10 +20,14 @@ public class PtmAlgo {
 	private File sofile;
 	private File tFile;
 	private File stFile;
+	private String patternText;
 	
 	private String[] stopWordsList;
 	private int newNum;
 	private int originalLength=0;
+	
+	private long timePtm=0;
+	private long timeOrig=0;
 
 	public PtmAlgo() {
 		
@@ -39,7 +43,13 @@ public class PtmAlgo {
 		 * 3. Stop Words. {, }.
 		 * 4. Stemming
 		 * 5. Redundancy Removal
+		 * 6. We have 3 important files: 
+		 * 		resultFinal.dat		(for PTM Search)
+		 * 		sourceFile.dat		(for original search)
+		 * 		WithStop.dat		(for d-limit search)
 		 */
+		
+		patternText = pattern;
 		
 		// Copying the Source File
 		
@@ -66,16 +76,71 @@ public class PtmAlgo {
 		
 		
 		// Do Pre processing.
-		countOriginal();
-
-		if (!stopFile.isEmpty()) {
-			
-			fetchStopWords();
-		}
 		
+		countOriginal();
+		fetchStopWords();		
 		removeStopWords();
 		stemSteps();
 		removeRedundancy();
+		
+		// Searching Technique
+		/*
+		 * 1. Search resultFinal.dat
+		 * 2. Search WithStop.dat if not found at previous search
+		 * 3. Search sourceFile.dat 
+		 */
+		
+		// Searching the FinalResult
+		long diff1 = searchResult("resultFinal.dat");
+		if (diff1 == 0) {
+			diff1 = searchResult("WithStop.dat");
+		}
+		timePtm = diff1;
+		System.out.println("Diff1: "+diff1);
+		long diff2 = searchResult("sourceFile.dat");
+		System.out.println("Diff2: "+diff2);
+		timeOrig = diff2;
+	}
+	
+	public long getTimeOrig() {
+		
+		return timeOrig;
+	}
+	
+	public long getTimePtm() {
+		
+		return timePtm;
+	}
+	
+	@SuppressWarnings("resource")
+	private long searchResult(String fName) {
+		
+		int i=0;
+		long l1=0;
+		long l2=0;
+		Scanner sc;
+		String word;
+		
+		System.out.println("L1 : " + l1);
+		try {
+			sc = new Scanner(new File(fName));
+			l1=System.nanoTime();
+			while (sc.hasNext()) {
+				i++;
+				word = sc.next();
+				if (word.equals(patternText)) {
+					l2 = System.nanoTime();
+					System.out.println("L2 : " + l2 + ". With Iterations: " + i);					
+				}
+			}
+			
+			if (l2 != 0) {
+				return l2-l1;
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		return 0;
 	}
 	
 	public void fetchStopWords() {
@@ -250,13 +315,8 @@ public class PtmAlgo {
 		System.out.println(sofile);
 		try {
 			sc = new Scanner(sofile);
-			
-			
 			while (sc.hasNext()) {
-				
-
 				word = sc.next();
-				
 				if (isRedundant(word)) {
 					i--;
 					System.out.println("Redun " + word);
@@ -266,21 +326,14 @@ public class PtmAlgo {
 					print = new PrintWriter(new FileOutputStream(outFile, true));
 					print.println(word);
 					print.close();
-				}
-				
-				
+				}				
 			}
-			
 			sc.close();
-			
-			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		
 		newNum = i;
 	}
-	
 	
 	@SuppressWarnings("resource")
 	private boolean isRedundant(String word) {
@@ -290,20 +343,16 @@ public class PtmAlgo {
 		File nFile = new File("resultFinal.dat");
 		try {
 			sc = new Scanner(nFile);
-			
 			while (sc.hasNext()) {
-				
 				prevWord = sc.next();
 				if (prevWord.equals(word)) {
 					return true;
 				}
 			}
-
 			sc.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		
 		return false;
 	}
 }

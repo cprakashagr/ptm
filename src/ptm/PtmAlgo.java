@@ -115,22 +115,21 @@ public class PtmAlgo {
 	@SuppressWarnings("resource")
 	private long searchResult(String fName) {
 		
-		int i=0;
 		long l1=0;
 		long l2=0;
 		Scanner sc;
 		String word;
 		
-		System.out.println("L1 : " + l1);
 		try {
 			sc = new Scanner(new File(fName));
 			l1=System.nanoTime();
+			System.out.println("L1: "+l1);
 			while (sc.hasNext()) {
-				i++;
 				word = sc.next();
 				if (word.equals(patternText)) {
 					l2 = System.nanoTime();
-					System.out.println("L2 : " + l2 + ". With Iterations: " + i);					
+					System.out.println("L2: " + l2);
+//					System.out.println("L2 : " + l2 + ". With Iterations: " + i);					
 				}
 			}
 			

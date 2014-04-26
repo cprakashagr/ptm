@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.net.URL;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -205,7 +206,8 @@ public class PtmUI extends JFrame implements Runnable {
 		System.out.println("Else");
 		String so = sourceFilePath.getText();
 		String st;
-		st = new File("db/stop.txt").getAbsolutePath();
+		URL s = PtmUI.class.getResource("/ptm/db/stop.txt");
+		st = new File(s.getFile()).getAbsolutePath();
 		if (!stopFilePath.getText().isEmpty())
 			st = stopFilePath.getText();
 		String pa = patternText.getText();

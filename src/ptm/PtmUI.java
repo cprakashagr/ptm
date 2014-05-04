@@ -23,6 +23,8 @@ import javax.swing.border.TitledBorder;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class PtmUI extends JFrame implements Runnable {
 
@@ -62,6 +64,23 @@ public class PtmUI extends JFrame implements Runnable {
 	}
 
 	public PtmUI() {
+		addWindowListener(new WindowAdapter() {
+			
+			@Override
+			public void windowClosing(WindowEvent e) {
+				
+				File f1 = new File("SourceFile.dat");
+				f1.deleteOnExit();
+				File f2 = new File("result1.txt");
+				f2.deleteOnExit();
+				File f3 = new File("resultFinal.dat");
+				f3.deleteOnExit();
+				File f4 = new File("WithoutStop.dat");
+				f4.deleteOnExit();
+				File f5 = new File("WithStop.dat");
+				f5.deleteOnExit();
+			}
+		});
 		setResizable(false);
 		
 		try {
@@ -99,6 +118,7 @@ public class PtmUI extends JFrame implements Runnable {
 					}
 					timeOrigTextPane.setText(leftTextPane + " " + timeOrig + " ns " + rightTextPane);
 					timePTMTextPane.setText(leftTextPane + " " + timePtm + " ns " + rightTextPane2);
+					
 					
 				}
 			}
@@ -219,6 +239,5 @@ public class PtmUI extends JFrame implements Runnable {
 		timeOrig = obj.getTimeOrig();
 		
 		System.out.println(timeOrig+ " ... " + timePtm);
-		notify();
 	}
 }

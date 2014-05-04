@@ -119,9 +119,10 @@ public class PtmAlgo {
 		long l2=0;
 		Scanner sc;
 		String word;
+		File f = new File(fName);
 		
 		try {
-			sc = new Scanner(new File(fName));
+			sc = new Scanner(f);
 			l1=System.nanoTime();
 			System.out.println("L1: "+l1);
 			while (sc.hasNext()) {

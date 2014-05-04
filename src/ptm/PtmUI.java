@@ -239,5 +239,6 @@ public class PtmUI extends JFrame implements Runnable {
 		timeOrig = obj.getTimeOrig();
 		
 		System.out.println(timeOrig+ " ... " + timePtm);
+		System.out.println("Difference in Time: " + (timeOrig-timePtm));
 	}
 }

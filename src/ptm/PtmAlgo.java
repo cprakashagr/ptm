@@ -112,7 +112,6 @@ public class PtmAlgo {
 		return timePtm;
 	}
 	
-	@SuppressWarnings("resource")
 	private long searchResult(String fName) {
 		
 		long l1=0;
@@ -135,11 +134,15 @@ public class PtmAlgo {
 			}
 			
 			if (l2 != 0) {
+				sc.close();
 				return l2-l1;
 			}
+			
+			sc.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+		
 		return 0;
 	}
 	
